@@ -32,7 +32,9 @@ pipeline {
              }
 
             when {
-                branch 'master'
+                expression {
+                    return env.GIT_BRANCH == "origin/master"
+                }
             }
 
             steps {
@@ -41,10 +43,14 @@ pipeline {
                     sh(" mvn clean package")
                 }
                 
-                sh """${5}(aws ecr get-login --no-include-email --region ${REGION})")
+                dockerauth = sh (script:'aws ecr get-login --no-include-email --region ${REGION}', returnStdOut:true).trim()
+                sh(dockerauth)
+                sh '''
+                #!/bin/bash
                 make dbuild
                 make dtag
-                make dpush"""
+                make dpush'''
+                
             }
         }
     }

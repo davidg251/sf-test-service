@@ -1,3 +1,6 @@
+REGION=us-east-2
+ACCOUNT=368932485079
+ECR_REPO=demoback
 dbuild:
 	docker build -t ${ECR_REPO}:$(shell ./version.sh) .
 dpush:
